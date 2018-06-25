@@ -1,6 +1,7 @@
 export const ADD_ACTIVE_TAB = 'ADD_ACTIVE_TAB';
 export const ADD_REQUEST = 'ADD_REQUEST';
 export const SET_REQUEST_COMPLETE = 'SET_REQUEST_COMPLETE';
+export const ADD_REQUEST_DATA = 'ADD_REQUEST_DATA';
 
 const isCloudinaryByResponseHeader = (headers) => {
     let isCloudinary = false;
@@ -24,7 +25,7 @@ export const addTab = (tabId) => {
     }
 }
 
-export const addRequest = (request) => {
+export const addRequest = (request, error = false) => {
     const { tabId = chrome.tabs.TAB_ID_NONE, requestId, url, timeStamp } = request;
     let tips = [];
     if (!url.includes('f_auto')) {
@@ -53,7 +54,15 @@ export const addRequest = (request) => {
             status: 'pending',
             tips,
             warnings,
+            error
         }
+    }
+}
+export const addRequestData = (data, tabId) => {
+    return {
+        type: ADD_REQUEST_DATA,
+        tabId,
+        data
     }
 }
 
