@@ -19,7 +19,8 @@
         "./modules/lodash.js",
         "./modules/popper.js",
         "contentScript.js",
-        "selectors.js"
+        "selectors.js",
+        "pageManager.js"
       ]
     }
   ],
