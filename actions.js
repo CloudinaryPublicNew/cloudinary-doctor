@@ -1,6 +1,7 @@
 export const ADD_ACTIVE_TAB = 'ADD_ACTIVE_TAB';
 export const ADD_REQUEST = 'ADD_REQUEST';
 export const SET_REQUEST_COMPLETE = 'SET_REQUEST_COMPLETE';
+export const ADD_REQUEST_DATA = 'ADD_REQUEST_DATA';
 
 const isCloudinaryByResponseHeader = (headers) => {
     let isCloudinary = false;
@@ -55,6 +56,13 @@ export const addRequest = (request, error = false) => {
             warnings,
             error
         }
+    }
+}
+export const addRequestData = (data, tabId) => {
+    return {
+        type: ADD_REQUEST_DATA,
+        tabId,
+        data
     }
 }
 

@@ -2,7 +2,9 @@ import reducers from './reducers.js';
 import { 
   addTab, 
   addRequest, 
-  setRequestComplete } from './actions.js';
+  setRequestComplete, 
+  addRequestData
+ } from './actions.js';
 
 const store = window.Redux.createStore(reducers);
 
@@ -27,16 +29,26 @@ const networkFilter = {
   types: ["image"]
 };
 
-// chrome.runtime.onMessage.addListener(
-//   function(request, sender, sendResponse) {
-//     request.type
-//     console.log(sender.tab ?
-//                 “from a content script:” + sender.tab.url :
-//                 “from the extension”);
-//     if (request.greeting == “hello”)
-//       sendResponse({farewell: “goodbye”});
-//   }
-// );
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    if (request.type === "image-info") {
+      chrome.tabs.query(
+        {currentWindow: true, active : true}, function(tabArray){
+          const tabId = tabArray[0]
+          store.dispatch(addRequestData(request.data, tabId));
+
+          const state = store.getState();
+          const tab = state[tabId]
+          const req = tab.find(i => i.url === request.url)
+        }
+      )
+    }
+
+    
+
+    sendResponse({type: 'state': data: req});
+  }
+);
 
 chrome.webRequest.onBeforeRequest.addListener(
   (request) => {
