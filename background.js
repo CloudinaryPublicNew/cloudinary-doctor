@@ -6,19 +6,35 @@ import {
 
 const store = window.Redux.createStore(reducers);
 
-const unsubscribe = store.subscribe(() => {
-  
-  chrome.storage.local.set({
-    state: store.getState()
-  });
-  
-  chrome.storage.local.get(["tabId"], (result) => {
-    chrome.tabs.sendRequest(result.tabId, {
-      storeUpdated: true
-    });
-  });
 
-});
+const registerToStoreChanges = (store, onChange) => {
+  let currentState = store.getState();
+
+  return store.subscribe(() => {
+      const newState = store.getState();
+
+      if (newState !== currentState) {
+          const prevState = currentState;
+          currentState = newState;
+          onChange(newState, prevState);
+      }
+  });
+};
+
+
+// const unsubscribe = store.subscribe(() => {
+  
+//   chrome.storage.local.set({
+//     state: store.getState()
+//   });
+  
+//   chrome.storage.local.get(["tabId"], (result) => {
+//     chrome.tabs.sendRequest(result.tabId, {
+//       storeUpdated: true
+//     });
+//   });
+
+// });
 
 const networkFilter = {
   urls: ["<all_urls>"],
@@ -39,6 +55,24 @@ chrome.tabs.onActivated.addListener((tab) => {
   const tabId = tab ? tab.tabId : chrome.tabs.TAB_ID_NONE;
   chrome.storage.local.set({ tabId: tabId });
   store.dispatch(addTab(tabId));
+  
+  //const port = chrome.  runtime.connect({name: "cloudinary"});
+
+  registerToStoreChanges(store,() => {
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+      if(tabs.length) {
+        chrome.tabs.sendMessage(tabs[0].id, {greeting: "hello"}, function(response) {
+          console.log(response.farewell);
+        });
+      }
+      
+    });
+
+    // port.postMessage({
+    //   type: "state-change", 
+    //   data: store.getState()}
+    // );
+  })
 });
 
 
