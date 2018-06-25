@@ -32,21 +32,13 @@ const networkFilter = {
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     if (request.type === "image-info") {
-      chrome.tabs.query(
-        {currentWindow: true, active : true}, function(tabArray){
-          if (tabArray && tabArray[0] && tabArray[0].id) {
-            const tabId = tabArray[0].id
-            store.dispatch(addRequestData(request.data, tabId));
-  
-            const state = store.getState();
-            const tab = state[tabId]
-            const req = tab.find(i => i.url === request.url)
-  
-            sendResponse({type: 'state', data: req});
-          }
-          
-        }
-      )
+      const tabId = sender.tab.id
+      store.dispatch(addRequestData(request.data, tabId));
+      const state = store.getState();
+      const tab = state[tabId]
+      const req = tab.find(i => i.url === request.data.src)
+
+      sendResponse({type: 'state', data: req});
     }
   }
 );
