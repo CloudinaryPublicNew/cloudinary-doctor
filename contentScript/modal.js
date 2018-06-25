@@ -99,7 +99,7 @@ const updateError = (data) => {
         </div>`
     });
 
-    errorPanel.updateHead(elements.length, ICONS.ERROR, "Error");
+    errorPanel.updateHead(elements.length, ICONS.ERROR, "Errors");
     errorPanel.updateBody(elements.join(""));
 }
 
