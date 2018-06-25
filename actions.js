@@ -26,7 +26,23 @@ export const addTab = (tabId) => {
 
 export const addRequest = (request) => {
     const { tabId = chrome.tabs.TAB_ID_NONE, requestId, url, timeStamp } = request;
+    let tips = [];
+    if (!url.includes('f_auto')) {
+        tips.push('Consider using f_auto')
+    }
+    if (!url.includes('q_auto')) {
+        tips.push('Consider using q_auto')
+    }
+    if (url.includes('f_gif') || url.includes('.gif')) {
+        tips.push('Convert animated to MP4')
+    }
 
+    let warnings = []
+    if (!url.includes('q_')) {
+        warnings.push('use q_auto')
+    }
+    
+    
     return {
         type: ADD_REQUEST,
         tabId: tabId,
@@ -34,7 +50,9 @@ export const addRequest = (request) => {
             requestId,
             url,
             startTime: timeStamp,
-            status: 'pending'
+            status: 'pending',
+            tips,
+            warnings,
         }
     }
 }
@@ -48,5 +66,6 @@ export const setRequestComplete = (request) => {
         requestId,
         timeStamp,
         isCloudinary: isCloudinaryByResponseHeader(responseHeaders)
+        
     }
 }

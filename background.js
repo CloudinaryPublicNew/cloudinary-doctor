@@ -6,6 +6,7 @@ import {
 
 const store = window.Redux.createStore(reducers);
 
+window._store = store;
 
 const registerToStoreChanges = (store, onChange) => {
   let currentState = store.getState();
@@ -62,7 +63,7 @@ chrome.tabs.onActivated.addListener((tab) => {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
       if(tabs.length) {
         chrome.tabs.sendMessage(tabs[0].id, {greeting: "hello"}, function(response) {
-          console.log(response.farewell);
+          // console.log(response.farewell);
         });
       }
       
