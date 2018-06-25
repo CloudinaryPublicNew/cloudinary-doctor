@@ -34,19 +34,20 @@ chrome.runtime.onMessage.addListener(
     if (request.type === "image-info") {
       chrome.tabs.query(
         {currentWindow: true, active : true}, function(tabArray){
-          const tabId = tabArray[0]
-          store.dispatch(addRequestData(request.data, tabId));
-
-          const state = store.getState();
-          const tab = state[tabId]
-          const req = tab.find(i => i.url === request.url)
+          if (tabArray && tabArray[0] && tabArray[0].id) {
+            const tabId = tabArray[0].id
+            store.dispatch(addRequestData(request.data, tabId));
+  
+            const state = store.getState();
+            const tab = state[tabId]
+            const req = tab.find(i => i.url === request.url)
+  
+            sendResponse({type: 'state', data: req});
+          }
+          
         }
       )
     }
-
-    
-
-    sendResponse({type: 'state': data: req});
   }
 );
 
