@@ -24,7 +24,7 @@ export const addTab = (tabId) => {
     }
 }
 
-export const addRequest = (request) => {
+export const addRequest = (request, error = false) => {
     const { tabId = chrome.tabs.TAB_ID_NONE, requestId, url, timeStamp } = request;
     let tips = [];
     if (!url.includes('f_auto')) {
@@ -53,6 +53,7 @@ export const addRequest = (request) => {
             status: 'pending',
             tips,
             warnings,
+            error
         }
     }
 }
