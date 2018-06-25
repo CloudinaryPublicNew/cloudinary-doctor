@@ -264,10 +264,10 @@ const injectExtCss = () => {
 
 	style.innerHTML = `		
 		.${EXPOSE_IMG_CLS} {border: 2px solid #1c69e8; box-shadow: 0px 0px 26px 5px rgba(76,131,199,1); cursor: pointer; }
-		#${EXPOSE_IMG_HELPER_ID} {border-radius: 4px; height: 40px; min-width: 120px; box-shadow: 0px 1px 16px 5px rgba(0,0,0,0.5); position: absolute; background-color: #fff; padding: 4px; display:flex;}
+		#${EXPOSE_IMG_HELPER_ID} {border-radius: 4px; height: 40px; min-width: 120px; box-shadow: 0px 1px 16px 5px rgba(0,0,0,0.5); position: absolute; background-color: #fff; padding: 4px; display:flex; justify-items: center; justify-content: space-between; align-items: center;}
 		#${EXPOSE_IMG_HELPER_ID}.${HELPER_IS_CLD_CLS}:before {background-image: url('https://cloudinary-res.cloudinary.com/image/upload/c_scale,w_86/v1/logo/for_white_bg/cloudinary_icon_for_white_bg.svg'); content: ""; width: 28px; height: 28px; display: inline-block; position:relative; }
 		.${HELPER_ICONS_CLS} {display: flex;}
-		.${HELPER_ICON_ITEM_CLS} {width: 16px; height: 16px; margin-right:2px;}
+		.${HELPER_ICON_ITEM_CLS} {width: 28px; height: 28px; margin-right:2px;}
 	`;
 
 	const head = document.querySelector("head");
