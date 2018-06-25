@@ -3,7 +3,8 @@ const ACCEPTED_DPR = 2,
 	// OVERLAY_ID = "__cld-ext-doctor-overlay__ver1",
 	// EXPOSE_CONTAINER_CLS = "__cld-ext-doctor-img-cont-expose__ver1",
 	EXPOSE_IMG_CLS = "__cld-ext-doctor-img-expose__ver1",
-	EXPOSE_IMG_HELPER_ID = "__cld-ext-doctor-img-helper__ver1";
+	EXPOSE_IMG_HELPER_ID = "__cld-ext-doctor-img-helper__ver1",
+	HELPER_IS_CLD_CLS = "__cld-ext-doctor-img-helper-is-cld__ver1";
 
 
 //todo: need to look at css images
@@ -50,16 +51,12 @@ const positionImageHelper = (helper, imgData) => {
 	helper.style.left = imgData.imageProps.left + "px";
 
 	const bottomPos = imgData.imageProps.top + imgData.imageProps.height + 5,
-		pageBottom = window.scrollY + window.innerHeight;
+		pageBottom = window.scrollY + window.innerHeight,
+		placeBelow = (pageBottom - 40) > bottomPos; //40 is the height of the helper
 
-	if (pageBottom - 40 > bottomPos) { //40 is the height of the helper
-		//position below the image
-		helper.style.top = bottomPos + "px";
-	}
-	else{
-		//position above the image
-		helper.style.top = (imgData.imageProps.top - 45) + "px";
-	}
+	helper.style.top = placeBelow ?
+		bottomPos + "px" :  //position below the image
+		(imgData.imageProps.top - 45) + "px"; //position above the image
 };
 
 const addImageHelper = (imgData) => {
@@ -119,7 +116,9 @@ const exposeImage = (imgData) => {
 	// if (highlightElm.childNodes.)
 	//highlightElm.border
 
-	imgData.img.className += ` ${EXPOSE_IMG_CLS}`;
+	if (imgData.meta.isCloudinary) {
+		imgData.img.className += ` ${EXPOSE_IMG_CLS}`; //we only highlight cloudinary images
+	}
 
 	imgData.img.addEventListener("mouseover", (e) => {
 		addImageHelper(imgData);
@@ -207,7 +206,7 @@ const injectExtCss = () => {
 	style.innerHTML = `		
 		.${EXPOSE_IMG_CLS} {border: 2px solid #1c69e8; box-shadow: 0px 0px 26px 5px rgba(76,131,199,1); cursor: pointer; }
 		#${EXPOSE_IMG_HELPER_ID} {border-radius: 4px; height: 40px; min-width: 120px; box-shadow: 0px 1px 16px 5px rgba(0,0,0,0.5); position: absolute; background-color: #fff; padding: 4px; display:flex;}
-		#${EXPOSE_IMG_HELPER_ID}:before {background-image: url('https://cloudinary-res.cloudinary.com/image/upload/c_scale,w_86/v1/logo/for_white_bg/cloudinary_icon_for_white_bg.svg'); content: ""; width: 28px; height: 28px; display: inline-block; position:relative; }
+		#${EXPOSE_IMG_HELPER_ID}.${HELPER_IS_CLD_CLS}:before {background-image: url('https://cloudinary-res.cloudinary.com/image/upload/c_scale,w_86/v1/logo/for_white_bg/cloudinary_icon_for_white_bg.svg'); content: ""; width: 28px; height: 28px; display: inline-block; position:relative; }
 	`;
 
 	const head = document.querySelector("head");
