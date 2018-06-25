@@ -1,0 +1,15 @@
+{
+  "name": "redux",
+  "homepage": "https://github.com/reactjs/redux",
+  "version": "4.0.0",
+  "_release": "4.0.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v4.0.0",
+    "commit": "17375b1d865200478699627ada57a3b8cc6748ae"
+  },
+  "_source": "https://github.com/reactjs/redux.git",
+  "_target": "4.0.0",
+  "_originalSource": "redux",
+  "_direct": true
+}
