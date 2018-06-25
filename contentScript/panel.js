@@ -36,9 +36,9 @@ class Panel {
 
         
         if(total === 0 || !total) {
-            hideElement(this.arrow);
+            this.arrow.style.visibility = "hidden";
         } else {
-            showElement(this.arrow, "flex");
+            this.arrow.style.visibility = "visible";
         }
     }
 

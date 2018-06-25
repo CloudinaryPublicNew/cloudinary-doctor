@@ -61,7 +61,6 @@ const updateData = (data) => {
 	const optimizedCount = data.filter((item)=>item.isCloudinary).length,
 		unoptimizedCount = data.length - optimizedCount;
 
-	unoptimizedPanel.updateHead(unoptimizedCount, ICONS.IMAGE, "Unoptimized");
 
     cloudinaryPanel.updateHead(optimizedCount,
         `<img width="100%" src="https://cloudinary-res.cloudinary.com/image/upload/fl_attachment/v1/logo/for_white_bg/cloudinary_icon_for_white_bg.svg"/>`, 
@@ -72,6 +71,7 @@ const updateData = (data) => {
     updateWarning(data);
     updateTips(data);
     updateError(data);
+    updateUnoptimized(data)
 }
 
 const updateError = (data) => {
@@ -177,6 +177,33 @@ const updateSuccess = (data) => {
 
     successPanel.updateHead(elements.length, ICONS.THUMB_UP, "Perfect Use Images");
     successPanel.updateBody(elements.join(""));
+}
+
+const updateUnoptimized = (data) => {
+
+    const elements = data
+	    .filter((item)=>!item.isCloudinary)
+	    .map((item) => {
+            console.log(item);
+        const imageUrl = item.url;
+        const imageName = _.truncate(imageUrl, {
+            'length': 40,
+            'omission': ' [...]'
+          });
+
+        return `<div class="cld-ext-tip-row" style="margin-bottom: 10px">
+            <div class="cld-ext-flex cld-ext-justify-between cld-ext-items-center" style="margin-bottom: 5px">
+                ${imageName}
+            </div>
+        </div>`;
+    });
+
+    
+    unoptimizedPanel.updateHead(elements.length, ICONS.IMAGE, `<div class="cld-ext-flex cld-ext-items-center cld-ext-justify-between">
+        <span>Unoptimized</span>
+        <button class="cld-ext-speed-test-button" style="margin-left: 20px;">Web Speed Test</button>
+    </div>`);
+    unoptimizedPanel.updateBody(elements.join(""));
 }
 
 
