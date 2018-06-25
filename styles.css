@@ -144,3 +144,11 @@
     width: 20px;
     height: 20px;
 }
+
+.helper-icon-error svg path {
+    fill: #F44235;
+}
+
+.helper-icon-success svg path {
+    fill: #20B832;
+}

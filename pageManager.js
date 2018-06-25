@@ -1,10 +1,12 @@
-const ACCEPTED_DPR = 2,
+const
 	STYLE_ID = "__cld-ext-doctor-style__ver1",
 	// OVERLAY_ID = "__cld-ext-doctor-overlay__ver1",
 	// EXPOSE_CONTAINER_CLS = "__cld-ext-doctor-img-cont-expose__ver1",
 	EXPOSE_IMG_CLS = "__cld-ext-doctor-img-expose__ver1",
 	EXPOSE_IMG_HELPER_ID = "__cld-ext-doctor-img-helper__ver1",
 	HELPER_IS_CLD_CLS = "__cld-ext-doctor-img-helper-is-cld__ver1";
+HELPER_ICON_ITEM_CLS = "__cld-ext-doctor-img-helper-warn__ver1";
+HELPER_ICONS_CLS = "__cld-ext-doctor-img-helper-icons__ver1";
 
 
 //todo: need to look at css images
@@ -72,9 +74,31 @@ const addImageHelper = (imgData, inspected) => {
 		const helper = document.createElement("div");
 		helper.setAttribute("id", EXPOSE_IMG_HELPER_ID);
 
+		if (inspected.isCloudinary){
+			helper.className += HELPER_IS_CLD_CLS;
+		}
+
 		if (imgData.imageProps.width > 50) {
 			helper.style.width = imgData.imageProps.width + "px";
 		}
+
+		const helperIcons = document.createElement("div");
+		helperIcons.className = HELPER_ICONS_CLS;
+
+		if (inspected.warnings.length || inspected.tips.length || inspected.error){
+			const helperWarn = document.createElement("span");
+			helperWarn.className = `${HELPER_ICON_ITEM_CLS} helper-icon-error`;
+			helperWarn.innerHTML = ICONS.NOTIFICATION;
+			helperIcons.appendChild(helperWarn);
+		}
+		else{
+			const helperTip = document.createElement("span");
+			helperTip.className = `${HELPER_ICON_ITEM_CLS} helper-icon-success`;
+			helperTip.innerHTML = ICONS.THUMB_UP;
+			helperIcons.appendChild(helperTip);
+		}
+
+		helper.appendChild(helperIcons);
 
 		positionImageHelper(helper, imgData);
 
@@ -242,6 +266,8 @@ const injectExtCss = () => {
 		.${EXPOSE_IMG_CLS} {border: 2px solid #1c69e8; box-shadow: 0px 0px 26px 5px rgba(76,131,199,1); cursor: pointer; }
 		#${EXPOSE_IMG_HELPER_ID} {border-radius: 4px; height: 40px; min-width: 120px; box-shadow: 0px 1px 16px 5px rgba(0,0,0,0.5); position: absolute; background-color: #fff; padding: 4px; display:flex;}
 		#${EXPOSE_IMG_HELPER_ID}.${HELPER_IS_CLD_CLS}:before {background-image: url('https://cloudinary-res.cloudinary.com/image/upload/c_scale,w_86/v1/logo/for_white_bg/cloudinary_icon_for_white_bg.svg'); content: ""; width: 28px; height: 28px; display: inline-block; position:relative; }
+		.${HELPER_ICONS_CLS} {display: flex;}
+		.${HELPER_ICON_ITEM_CLS} {width: 16px; height: 16px; margin-right:2px;}
 	`;
 
 	const head = document.querySelector("head");
@@ -250,19 +276,6 @@ const injectExtCss = () => {
 		head.appendChild(style);
 	}
 };
-//
-// const requestState = () => {
-//
-// 	chrome.runtime.sendMessage(chrome.runtime.id, {
-// 		type: "get-state",
-// 	}, null, (response) => {
-//
-// 		if (response && response.type === "state"){
-// 			handleInspected(response.data);
-// 		}
-// 	});
-//
-// };
 
 const listenToDataMessage = ()=>{
 
@@ -271,18 +284,6 @@ const listenToDataMessage = ()=>{
 		if (msg && msg.type === "updated-images"){
 			handleInspected(msg.data);
 		}
-
-		// console.log(request);
-		// if(port.name == "cloudinary") {
-		//     port.onMessage.addListener(function(msg) {
-		//         switch(msg.type) {
-		//             case "state-change":
-		//                 console.log(msg);
-		//             return;
-
-		//         }
-		//     });
-		// }
 	});
 };
 
@@ -298,44 +299,3 @@ const init = () => {
 
 
 init();
-
-
-// var bgWindowObject = chrome.extension.getBackgroundPage();
-
-// console.log(bgWindowObject);
-
-
-
-
-
-// chrome.storage.local.get(['state', 'tabId'], function(result) {
-//
-//     const cldImages = selectCloudinaryImages(result.state, result.tabId);
-//     const pageImageTag = document.getElementsByTagName("img");
-//
-//     const cldElements = [];
-//
-//     _.forEach(pageImageTag, (img) => {
-//         const match = _.find(cldImages,{url : img.getAttribute("src")});
-//         if(match) {
-//             cldElements.push(img);
-//             img.style.border = "10px solid red";
-//         }
-//     });
-//
-//
-//
-// });
-
-
-// chrome.extension.onRequest.addListener(function(message, sender, sendResponse) {
-//     if(message.storeUpdated) {
-//
-//     }
-// });
-
-// const getPageImages = () => {
-//
-// }
-
-
