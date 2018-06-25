@@ -29,18 +29,21 @@ export const addRequest = (request, error = false) => {
     const { tabId = chrome.tabs.TAB_ID_NONE, requestId, url, timeStamp } = request;
     let tips = [];
     if (!url.includes('f_auto')) {
-        tips.push('Consider using f_auto')
+        tips.push('Image format selection - consider using automatic format selection f_auto')
     }
     if (!url.includes('q_auto')) {
-        tips.push('Consider using q_auto')
+        tips.push('Fixed quality used, consider replacing with automatic quality selection q_auto')
     }
     if (url.includes('f_gif') || url.includes('.gif')) {
-        tips.push('Convert animated to MP4')
+        tips.push('Convert animated GIF to MP4')
+    }
+    if (url.includes('c_fill') && (!url.includes('g_auto') && !url.includes('g_face') && !url.includes('g_faces') )) {
+        tips.push('Crop without content-aware gravity, consider using g_auto')
     }
 
     let warnings = []
     if (!url.includes('q_')) {
-        warnings.push('use q_auto')
+        warnings.push('Image quality not set, add q_auto')
     }
     
     
