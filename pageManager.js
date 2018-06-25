@@ -250,19 +250,19 @@ const injectExtCss = () => {
 		head.appendChild(style);
 	}
 };
-
-const requestState = () => {
-
-	chrome.runtime.sendMessage(chrome.runtime.id, {
-		type: "get-state",
-	}, null, (response) => {
-
-		if (response && response.type === "state"){
-			handleInspected(response.data);
-		}
-	});
-
-};
+//
+// const requestState = () => {
+//
+// 	chrome.runtime.sendMessage(chrome.runtime.id, {
+// 		type: "get-state",
+// 	}, null, (response) => {
+//
+// 		if (response && response.type === "state"){
+// 			handleInspected(response.data);
+// 		}
+// 	});
+//
+// };
 
 const listenToDataMessage = ()=>{
 
@@ -289,7 +289,7 @@ const listenToDataMessage = ()=>{
 const init = () => {
 	injectExtCss();
 
-	requestState();
+	requestState(handleInspected);
 
 	listenToDataMessage();
 

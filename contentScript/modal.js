@@ -56,37 +56,34 @@ const tipsPanel = new Panel("tips");
 const successPanel = new Panel("success");
 const warningPanel = new Panel("warning");
 
-const updateData = (state) => {
-    unoptimizedPanel.updateHead(100, ICONS.IMAGE, "Unoptimized");
-    cloudinaryPanel.updateHead(102, 
+const updateData = (data) => {
+
+	const optimizedCount = data.filter((item)=>item.isCloudinary).length,
+		unoptimizedCount = data.length - optimizedCount;
+
+	unoptimizedPanel.updateHead(unoptimizedCount, ICONS.IMAGE, "Unoptimized");
+
+    cloudinaryPanel.updateHead(optimizedCount,
         `<img width="100%" src="https://cloudinary-res.cloudinary.com/image/upload/fl_attachment/v1/logo/for_white_bg/cloudinary_icon_for_white_bg.svg"/>`, 
         `<span style="color: #0071CE; font-weight: bold;">Powered By Cloudinary`
     );
    
-    updateSuccess(state);
-    updateWarning(state);
-    updateTips(state);
-    updateError(state);
+    updateSuccess(data);
+    updateWarning(data);
+    updateTips(data);
+    updateError(data);
 }
 
-const updateError = (state) => {
-    const images = [
-        {
-            url: "https://res-3.cloudinary.com/cloudinary/image/upload/c_pad,dpr_auto,h_40,w_110/hmwjugkbeo8qvrf7cvvu.png",
-            msg: "sdsdssd"
-        },
-        {
-            url: "https://res-3.cloudinary.com/cloudinary/image/upload/c_pad,dpr_auto,h_40,w_110/hmwjugkbeo8qvrf7cvvu.png",
-            msg: "sdsdssd"
-        },
-    ];
+const updateError = (data) => {
 
-    const html = images.map((item) => {
-        const imageUrl = item.url;
-        const imageName = _.truncate(imageUrl, {
-            'length': 25,
-            'omission': ' [...]'
-          });
+    const elements = data
+	    .filter((item)=>item.error)
+	    .map((item) => {
+	        const imageUrl = item.url;
+	        const imageName = _.truncate(imageUrl, {
+	            'length': 25,
+	            'omission': ' [...]'
+	          });
 
         return `<div class="cld-ext-tip-row" style="margin-bottom: 10px">
             <div class="cld-ext-flex cld-ext-justify-between cld-ext-items-center" style="margin-bottom: 5px">
@@ -97,34 +94,25 @@ const updateError = (state) => {
                 </div>
             </div>
             <div style="margin-bottom: 5px">
-                ${item.msg}
+                Failed
             </div>
         </div>`
-    }).join("");
+    });
 
-    errorPanel.updateHead(105, ICONS.ERROR, "Error");
-    errorPanel.updateBody(html);
+    errorPanel.updateHead(elements.length, ICONS.ERROR, "Error");
+    errorPanel.updateBody(elements.join(""));
 }
 
-const updateWarning = (state) => {
-    const warnings = [
-        {
-            url: "https://res-3.cloudinary.com/cloudinary/image/upload/c_pad,dpr_auto,h_40,w_110/hmwjugkbeo8qvrf7cvvu.png",
-            msg: ["sddsdsddsd"]
-        },
-        {
-            url: "https://res-3.cloudinary.com/cloudinary/image/upload/c_pad,dpr_auto,h_40,w_110/hmwjugkbeo8qvrf7cvvu.png",
-            msg: ["sddsdsddsd"]
-        },
-    ];
-
-    const html = warnings.map((item) => {
+const updateWarning = (data) => {
+    const elements = data
+	    .filter((item)=> item.warnings.length)
+	    .map((item) => {
         const imageUrl = item.url;
-        const msg = item.msg; 
+        const msg = item.warnings.join("<br/>");
 
         return `<div class="cld-ext-tip-row" style="margin-bottom: 10px">
             <div class="cld-ext-flex cld-ext-justify-between cld-ext-items-center" style="margin-bottom: 5px">
-                <img src="${imageUrl}" width="24" height="24">
+                <img src="${imageUrl}" width="32">
                 <div class="cld-ext-flex" style="align-items: flex-end;">
                     <a href="#" class="cld-ext-icon-16" style="margin-right: 8px;">${ICONS.LAUNCH}</a>
                     <a href="#" class="cld-ext-icon-16" style="margin-right: 8px;">${ICONS.WEB}</a>
@@ -132,32 +120,26 @@ const updateWarning = (state) => {
             </div>
             <div>${msg}</div>
         </div>`
-    }).join("");
+    });
 
-    warningPanel.updateHead(105, ICONS.NOTIFICATION, "Warning");
-    warningPanel.updateBody(html);
+    warningPanel.updateHead(elements.length, ICONS.NOTIFICATION, "Warnings");
+    warningPanel.updateBody(elements.join(""));
 }
 
-const updateTips = (state) => {
-    const tips = [
-        {
-            url: "https://res-3.cloudinary.com/cloudinary/image/upload/c_pad,dpr_auto,h_40,w_110/hmwjugkbeo8qvrf7cvvu.png",
-            tips: ["sdsdsd", "sdsdsd", "sdsdsds"]
-        },
-        {
-            url: "https://res-3.cloudinary.com/cloudinary/image/upload/c_pad,dpr_auto,h_40,w_110/hmwjugkbeo8qvrf7cvvu.png",
-            tips: ["1111", "111"]
-        }
-    ];
+const updateTips = (data) => {
 
-    const html = tips.map((tip) => {
-        const imageName = tip.url;
-        const imageUrl = tip.url;
-        const tips = tip.tips.join("<br/>"); 
+    const elements = data
+	    .filter((item)=> item.tips.length)
+	    .map((item)=>{
+
+
+        // const imageName = item.url;
+        const imageUrl = item.url;
+        const tips = item.tips.join("<br/>");
 
         return `<div class="cld-ext-tip-row" style="margin-bottom: 10px">
             <div class="cld-ext-flex cld-ext-justify-between cld-ext-items-center" style="margin-bottom: 5px">
-                <img src="${imageUrl}" width="24" height="24">
+                <img src="${imageUrl}" width="32">
                 <div class="cld-ext-flex" style="align-items: flex-end;">
                     <a href="#" class="cld-ext-icon-16" style="margin-right: 8px;">${ICONS.LAUNCH}</a>
                     <a href="#" class="cld-ext-icon-16" style="margin-right: 8px;">${ICONS.WEB}</a>
@@ -165,43 +147,42 @@ const updateTips = (state) => {
             </div>
             <div>${tips}</div>
         </div>`
-    }).join("");
+    });
 
-    tipsPanel.updateHead(50, ICONS.HIGHLIGHT, "Tips");
-    tipsPanel.updateBody(html);
+    tipsPanel.updateHead(elements.length, ICONS.HIGHLIGHT, "Tips");
+    tipsPanel.updateBody(elements.join(""));
 }
 
-const updateSuccess = (state) => {
-    const images = [
-        {
-            url: "https://res-3.cloudinary.com/cloudinary/image/upload/c_pad,dpr_auto,h_40,w_110/hmwjugkbeo8qvrf7cvvu.png",
-        },
-        {
-            url: "https://res-3.cloudinary.com/cloudinary/image/upload/c_pad,dpr_auto,h_40,w_110/hmwjugkbeo8qvrf7cvvu.png",
-        },
-    ];
+const updateSuccess = (data) => {
 
-    const html = images.map((item) => {
+    const elements = data
+	    .filter((item)=>!item.warnings.length && !item.tips.length && !item.error)
+	    .map((item) => {
         const imageUrl = item.url;
-        const imageName = _.truncate(imageUrl, {
-            'length': 10,
-            'omission': ' [...]'
-          });
+        // const imageName = _.truncate(imageUrl, {
+        //     'length': 10,
+        //     'omission': ' [...]'
+        //   });
 
         return `<div class="cld-ext-tip-row" style="margin-bottom: 10px">
             <div class="cld-ext-flex cld-ext-justify-between cld-ext-items-center" style="margin-bottom: 5px">
-                <img src="${imageUrl}" width="24" height="24">
+                <img src="${imageUrl}" width="32">
                 <div class="cld-ext-flex" style="align-items: flex-end;">
                     <a href="#" class="cld-ext-icon-16" style="margin-right: 8px;">${ICONS.LAUNCH}</a>
                     <a href="#" class="cld-ext-icon-16" style="margin-right: 8px;">${ICONS.WEB}</a>
                 </div>
             </div>
-        </div>`
-    }).join("");
+        </div>`;
+    });
 
-    successPanel.updateHead(50, ICONS.THUMB_UP, "Perfect Use Images");
-    successPanel.updateBody(html);
+    successPanel.updateHead(elements.length, ICONS.THUMB_UP, "Perfect Use Images");
+    successPanel.updateBody(elements.join(""));
 }
 
+
+
+
 appendModal();
-updateData();
+
+requestState(updateData);
+// updateData();

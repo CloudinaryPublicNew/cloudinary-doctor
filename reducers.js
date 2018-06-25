@@ -52,27 +52,34 @@ export default (state = {}, action) => {
                 return state;
             }
         case SET_REQUEST_COMPLETE:
-            return Object.assign({}, state, {
-                [action.tabId]: state[action.tabId].length ?
-	                state[action.tabId].map((request) => {
-                        if(request.requestId === action.requestId) {
-                        return {...request,
-                            status: "complete",
-                            endTime: action.timeStamp,
-                            duration: action.timeStamp - request.startTime,
-                            isCloudinary: action.isCloudinary
-                        }
-                    } else {
-                        return request;
-                    }
-                }) :
-	                [{...action.request,
-		                status: "complete",
-		                endTime: action.timeStamp,
-		                duration: action.timeStamp - action.request.startTime,
-		                isCloudinary: action.isCloudinary
-	                }]
-            });
+        	if (state[action.tabId]) {
+		        return Object.assign({}, state, {
+			        [action.tabId]: state[action.tabId].length ?
+				        state[action.tabId].map((request) => {
+					        if (request.requestId === action.requestId) {
+						        return {
+							        ...request,
+							        status: "complete",
+							        endTime: action.timeStamp,
+							        duration: action.timeStamp - request.startTime,
+							        isCloudinary: action.isCloudinary
+						        }
+					        } else {
+						        return request;
+					        }
+				        }) :
+				        [{
+					        ...action.request,
+					        status: "complete",
+					        endTime: action.timeStamp,
+					        duration: action.timeStamp - action.request.startTime,
+					        isCloudinary: action.isCloudinary
+				        }]
+		        });
+	        }
+	        else{
+        		return state;
+	        }
 	    case RESET_TAB_DATA:
 	    	return Object.assign({}, state, {
 	    		[action.tabId]: []
