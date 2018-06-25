@@ -1,7 +1,8 @@
 export const ADD_ACTIVE_TAB = 'ADD_ACTIVE_TAB';
 export const ADD_REQUEST = 'ADD_REQUEST';
 export const SET_REQUEST_COMPLETE = 'SET_REQUEST_COMPLETE';
-export const ADD_REQUEST_DATA = 'ADD_REQUEST_DATA';
+export const ADD_SCRAPED_DATA = 'ADD_SCRAPED_DATA';
+export const RESET_TAB_DATA = "RESET_TAB_DATA";
 
 const isCloudinaryByResponseHeader = (headers) => {
     let isCloudinary = false;
@@ -21,9 +22,16 @@ const isCloudinaryByResponseHeader = (headers) => {
 export const addTab = (tabId) => {
     return {
     type: ADD_ACTIVE_TAB,
-    id: tabId || chrome.tabs.TAB_ID_NONE
+    tabId: tabId || chrome.tabs.TAB_ID_NONE
     }
-}
+};
+
+export const resetTab = (tabId) => {
+	return {
+		type: RESET_TAB_DATA,
+		tabId,
+	};
+};
 
 export const addRequest = (request, error = false) => {
     const { tabId = chrome.tabs.TAB_ID_NONE, requestId, url, timeStamp } = request;
@@ -61,11 +69,11 @@ export const addRequest = (request, error = false) => {
         }
     }
 }
-export const addRequestData = (data, tabId) => {
+export const addScrapedData = (data, tabId) => {
     return {
-        type: ADD_REQUEST_DATA,
+        type: ADD_SCRAPED_DATA,
         tabId,
-        data
+	    data
     }
 }
 
@@ -73,11 +81,11 @@ export const setRequestComplete = (request) => {
     const { tabId = chrome.tabs.TAB_ID_NONE, timeStamp, requestId, responseHeaders } = request;
     
     return {
+	    ...addRequest(request),
         type: SET_REQUEST_COMPLETE,
         tabId: tabId,
         requestId,
         timeStamp,
         isCloudinary: isCloudinaryByResponseHeader(responseHeaders)
-        
-    }
+    };
 }

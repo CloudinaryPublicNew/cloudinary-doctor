@@ -12,6 +12,8 @@ const ACCEPTED_DPR = 2,
 
 let scrapedData = [];
 
+const inspectedData = {};
+
 const getImageAbsolutePosition = (img) => {
 	const rect = img.getBoundingClientRect(),
 		offsetParent = img.offsetParent,
@@ -62,7 +64,7 @@ const positionImageHelper = (helper, imgData) => {
 		(imgData.imageProps.top - 45) + "px"; //position above the image
 };
 
-const addImageHelper = (imgData) => {
+const addImageHelper = (imgData, inspected) => {
 
 	const stHandler = setTimeout(() => {
 		removeImageHelper(imgData);
@@ -119,24 +121,45 @@ const exposeImage = (imgData) => {
 	// if (highlightElm.childNodes.)
 	//highlightElm.border
 
-	if (imgData.meta.isCloudinary) {
-		imgData.img.className += ` ${EXPOSE_IMG_CLS}`; //we only highlight cloudinary images
+	const inspected = inspectedData[imgData.src];
+
+	if (inspected) {
+
+		if (inspected.isCloudinary) {
+			imgData.img.className += ` ${EXPOSE_IMG_CLS}`; //we only highlight cloudinary images
+		}
+
+		imgData.img.addEventListener("mouseover", (e) => {
+			addImageHelper(imgData, inspected);
+			e.stopPropagation();
+		});
+
+		imgData.img.addEventListener("mouseleave", (e) => {
+			// removeImageHelper(imgData);
+			e.stopPropagation();
+		});
+
+		imgData.img.addEventListener("click", (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			return false;
+		});
+
 	}
+};
 
-	imgData.img.addEventListener("mouseover", (e) => {
-		addImageHelper(imgData);
-		e.stopPropagation();
-	});
+const updateExposedImage = (inspectedData) =>{
+	const scraped = scrapedData.find((img)=>img.src === inspectedData.url);
 
-	imgData.img.addEventListener("mouseleave", (e) => {
-		// removeImageHelper(imgData);
-		e.stopPropagation();
-	});
+	if (scraped){
+		exposeImage(scraped);
+	}
+};
 
-	imgData.img.addEventListener("click", (e) => {
-		e.preventDefault();
-		e.stopPropagation();
-		return false;
+const handleInspected = (inspected) =>{
+	inspected.forEach((data)=>{
+		inspectedData[data.url] = data;
+		updateExposedImage(data);
 	});
 };
 
@@ -152,15 +175,18 @@ const listAndExposeImages = () => {
 			data: imgData
 		}, null, (response) => {
 
-			if (response && response.type === "state") {
-				console.log("response for image !!!!!!!!!! ", response);
+			if (response && response.type === "image-data") {
+				if (response.data){
+					console.log("response for image !!!!!!!!!! ", response);
 
-				imgData.inspection.hasWarnings = true; //response.data.warnings.length;
-				imgData.inspection.error = true;
+					// imgData.inspection.hasWarnings = true; //response.data.warnings.length;
+					// imgData.inspection.error = true;
+					//
+					// imgData.inspection.status = "done";
 
-				imgData.inspection.status = "done";
-
-				exposeImage(imgData);
+					inspectedData[response.data.url] = response.data;
+					exposeImage(imgData);
+				}
 			}
 		});
 
@@ -225,15 +251,26 @@ const injectExtCss = () => {
 	}
 };
 
+const requestState = () => {
+
+	chrome.runtime.sendMessage(chrome.runtime.id, {
+		type: "get-state",
+	}, null, (response) => {
+
+		if (response && response.type === "state"){
+			handleInspected(response.data);
+		}
+	});
+
+};
 
 const listenToDataMessage = ()=>{
 
 	chrome.runtime.onMessage.addListener((msg) => {
 
-		if (msg && msg.type === "image-state"){
-
+		if (msg && msg.type === "updated-images"){
+			handleInspected(msg.data);
 		}
-
 
 		// console.log(request);
 		// if(port.name == "cloudinary") {
@@ -251,6 +288,8 @@ const listenToDataMessage = ()=>{
 
 const init = () => {
 	injectExtCss();
+
+	requestState();
 
 	listenToDataMessage();
 
