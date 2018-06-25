@@ -1,3 +1,7 @@
+
+manage state between pages
+
+
 // get all info from network
 // check which one of the images is cloudinary and add info to storage
 // add tachyons component library

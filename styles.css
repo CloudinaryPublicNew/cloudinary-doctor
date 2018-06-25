@@ -1,0 +1,146 @@
+/* utils  */
+
+.cld-ext-flex {
+    display: flex;
+}
+
+.cld-ext-items-center {
+    display: flex;
+}
+
+.cld-ext-justify-between {
+    justify-content: space-between;
+}
+
+.cld-ext-items-center {
+    align-items: center;
+}
+
+.cld-ext-pa3 {
+    padding: 1rem;
+}
+
+.cld-ext-pl3 {
+    padding-left: 8px;
+}
+
+.cld-ext-pa3 {
+    padding: 8px;
+}
+
+.cld-ext-mr2  {
+    margin-right: 5px;
+}
+
+.cld-ext-w-100  {
+    width: 100%;
+}
+
+.cld-pointer {
+    cursor: pointer;
+}
+
+
+.cld-ext-modal-wrap {
+    color: #323A45;
+}
+
+.cld-ext-logo-wrap {
+    padding: 10px 15px;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.14), 0 3px 4px 0 rgba(0,0,0,0.1), 0 1px 5px 0 rgba(0,0,0,0.1);
+    border-bottom: 1px solid #d9d9d9;
+}
+
+.cld-ext-panel-body {
+    padding-left: 35px;
+    padding-right: 8px;
+    font-size: 12px;
+}
+
+.cld-ext-close {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.cld-ext-close svg path {
+    fill: #323A45;
+}
+
+.cld-ext-speed-test-button {
+    border: none;
+    background-color: #0078FF;
+    margin: 0;
+    padding: 5px 8px;
+    border-radius: 4px;
+    color: #FFF;
+    font-size: 12px;
+
+}
+
+.cld-ext-panel-head {
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.cld-ext-panel .cld-ext-panel-head {
+    color: #323A45;
+}
+
+.cld-ext-panel .cld-ext-panel-head .cld-ext-panel-head-icon svg path {
+    color: #323A45;
+}
+
+.cld-ext-panel.error .cld-ext-panel-head {
+    color: #F44235;
+}
+
+.cld-ext-panel.error .cld-ext-panel-head .cld-ext-panel-head-icon svg path {
+    fill: #F44235;
+}
+
+.cld-ext-panel.warning .cld-ext-panel-head {
+    color: #FF620C;
+}
+
+.cld-ext-panel.warning .cld-ext-panel-head .cld-ext-panel-head-icon svg path {
+    fill: #FF620C;
+}
+
+.cld-ext-panel.success .cld-ext-panel-head {
+    color: #20B832;
+}
+
+.cld-ext-panel.success .cld-ext-panel-head .cld-ext-panel-head-icon svg path {
+    fill: #20B832;
+}
+
+.cld-ext-panel.tips .cld-ext-panel-head {
+    color: #FD9C2B;
+}
+
+.cld-ext-panel.tips .cld-ext-panel-head .cld-ext-panel-head-icon svg path {
+    fill: #FD9C2B;
+}
+
+
+.cld-ext-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.cld-ext-icon-16 {
+    display: flex;
+    align-items: center;
+    width: 16px;
+    height: 16px;
+}
+
+.cld-ext-icon-20 {
+    display: flex;
+    align-items: center;
+    width: 20px;
+    height: 20px;
+}
