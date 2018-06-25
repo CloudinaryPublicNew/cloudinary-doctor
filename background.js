@@ -58,24 +58,17 @@ chrome.tabs.onActivated.addListener((tab) => {
   
   //const port = chrome.  runtime.connect({name: "cloudinary"});
 
-  registerToStoreChanges(store,() => {
+  registerToStoreChanges(store,(next, prev) => {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
       if(tabs.length) {
         chrome.tabs.sendMessage(tabs[0].id, {greeting: "hello"}, function(response) {
-          console.log(response.farewell);
+          //console.log(response.farewell);
         });
       }
       
     });
-
-    // port.postMessage({
-    //   type: "state-change", 
-    //   data: store.getState()}
-    // );
   })
 });
-
-
 
 
 //   chrome.webRequest.onBeforeRequest.addListener((details) => {

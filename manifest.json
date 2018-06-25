@@ -14,12 +14,15 @@
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*"],
-      "css": ["style.css"],
+      "css": ["styles.css"],
       "js": [
         "./modules/lodash.js",
-        "./modules/popper.js",
-        "contentScript.js",
-        "selectors.js"
+        "./contentScript/utils.js",
+        "./contentScript/panel.js",
+        "./contentScript/icons.js",
+        "./contentScript/modal.js",
+        "selectors.js",
+        "contentScript.js"
       ]
     }
   ],
