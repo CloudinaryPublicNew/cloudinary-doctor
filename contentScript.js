@@ -2,7 +2,8 @@ const ACCEPTED_DPR = 2,
 	STYLE_ID = "__cld-ext-doctor-style__ver1",
 	// OVERLAY_ID = "__cld-ext-doctor-overlay__ver1",
 	// EXPOSE_CONTAINER_CLS = "__cld-ext-doctor-img-cont-expose__ver1",
-	EXPOSE_IMG_CLS = "__cld-ext-doctor-img-expose__ver1";
+	EXPOSE_IMG_CLS = "__cld-ext-doctor-img-expose__ver1",
+	EXPOSE_IMG_HELPER_ID = "__cld-ext-doctor-img-helper__ver1";
 
 
 //todo: need to look at css images
@@ -26,28 +27,75 @@ const getImageAbsolutePosition = (img) => {
 	};
 };
 
-const getImageData = (img) => {
+const getImageData = (img) => ({
+	img,
+	src: img.src,
+	imageProps: {
+		width: img.width,
+		height: img.height,
+		naturalWidth: img.naturalWidth,
+		naturalHeight: img.naturalHeight,
+		...getImageAbsolutePosition(img),
+	},
+	// containerProps: {width: 0, height: 0},
+	meta: {
+		isCloudinary: true,
+		id: img.id,
+		className: img.className
+	},
+});
 
-	const imgData = {
-		img,
-		src: img.src,
-		imageProps: {
-			width: img.width,
-			height: img.height,
-			naturalWidth: img.naturalWidth,
-			naturalHeight: img.naturalHeight,
-			...getImageAbsolutePosition(img),
-		},
-		// containerProps: {width: 0, height: 0},
-		meta: {
-			isCloudinary: true,
-			id: img.id,
-			className: img.className
-		},
-	};
-	// console.log("found image !!!!!!!! ", imgData, img);
+const positionImageHelper = (helper, imgData) => {
 
-	return imgData;
+	helper.style.left = imgData.imageProps.left + "px";
+
+	const bottomPos = imgData.imageProps.top + imgData.imageProps.height + 5,
+		pageBottom = window.scrollY + window.innerHeight;
+
+	if (pageBottom - 40 > bottomPos) { //40 is the height of the helper
+		//position below the image
+		helper.style.top = bottomPos + "px";
+	}
+	else{
+		//position above the image
+		helper.style.top = (imgData.imageProps.top - 45) + "px";
+	}
+};
+
+const addImageHelper = (imgData) => {
+
+	const stHandler = setTimeout(() => {
+		removeImageHelper(imgData);
+
+		const helper = document.createElement("div");
+		helper.setAttribute("id", EXPOSE_IMG_HELPER_ID);
+
+		if (imgData.imageProps.width > 50) {
+			helper.style.width = imgData.imageProps.width + "px";
+		}
+
+		positionImageHelper(helper, imgData);
+
+		document.body.appendChild(helper);
+
+	}, 400);
+
+	imgData.img.dataset["cldDrHelperHandler"] = stHandler;
+};
+
+const removeImageHelper = (imgData) => {
+
+	const stHandler = imgData.img.dataset["cldDrHelperHandler"];
+
+	if (stHandler) {
+		clearTimeout(parseInt(stHandler));
+
+		const helper = document.getElementById(EXPOSE_IMG_HELPER_ID);
+
+		if (helper) {
+			helper.parentNode.removeChild(helper);
+		}
+	}
 };
 
 const exposeImage = (imgData) => {
@@ -64,17 +112,30 @@ const exposeImage = (imgData) => {
 	// imgExposeContainer.appendChild(exposedImg);
 	//
 	// document.body.appendChild(imgExposeContainer);
-	const props = imgData.imageProps;
-
+	// const props = imgData.imageProps;
 	// let highlightElm =  (props.offsetBoundHeight > props.boundHeight || props.offsetBoundWidth > props.boundWidth) ?
 	// 	props.offsetParent : imgData.img;
 	//
 	// if (highlightElm.childNodes.)
-
 	//highlightElm.border
 
 	imgData.img.className += ` ${EXPOSE_IMG_CLS}`;
 
+	imgData.img.addEventListener("mouseover", (e) => {
+		addImageHelper(imgData);
+		e.stopPropagation();
+	});
+
+	imgData.img.addEventListener("mouseleave", (e) => {
+		// removeImageHelper(imgData);
+		e.stopPropagation();
+	});
+
+	imgData.img.addEventListener("click", (e) => {
+		e.preventDefault();
+		e.stopPropagation();
+		return false;
+	});
 };
 
 const listAndExposeImages = () => {
@@ -89,8 +150,9 @@ const listAndExposeImages = () => {
 			data: imgData
 		}, null, (response) => {
 
-			console.log("response for image !!!!!!!!!! ", response);
-
+			if (response) {
+				console.log("response for image !!!!!!!!!! ", response);
+			}
 		}); //string extensionId, any message, object options, function responseCallback)
 
 		exposeImage(imgData);
@@ -143,7 +205,9 @@ const injectExtCss = () => {
 // .${EXPOSE_CONTAINER_CLS} {position: absolute; z-index: 1001; background-color: #fff;}
 
 	style.innerHTML = `		
-		.${EXPOSE_IMG_CLS} {border: 2px solid #1c69e8; box-shadow: 0px 0px 26px 5px rgba(76,131,199,1); }
+		.${EXPOSE_IMG_CLS} {border: 2px solid #1c69e8; box-shadow: 0px 0px 26px 5px rgba(76,131,199,1); cursor: pointer; }
+		#${EXPOSE_IMG_HELPER_ID} {border-radius: 4px; height: 40px; min-width: 120px; box-shadow: 0px 1px 16px 5px rgba(0,0,0,0.5); position: absolute; background-color: #fff; padding: 4px; display:flex;}
+		#${EXPOSE_IMG_HELPER_ID}:before {background-image: url('https://cloudinary-res.cloudinary.com/image/upload/c_scale,w_86/v1/logo/for_white_bg/cloudinary_icon_for_white_bg.svg'); content: ""; width: 28px; height: 28px; display: inline-block; position:relative; }
 	`;
 
 	const head = document.querySelector("head");
