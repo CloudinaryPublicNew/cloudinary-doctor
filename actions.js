@@ -1,6 +1,7 @@
 export const ADD_ACTIVE_TAB = 'ADD_ACTIVE_TAB';
 export const ADD_REQUEST = 'ADD_REQUEST';
 export const SET_REQUEST_COMPLETE = 'SET_REQUEST_COMPLETE';
+export const ADD_REQUEST_DATA = 'ADD_REQUEST_DATA';
 
 const isCloudinaryByResponseHeader = (headers) => {
     let isCloudinary = false;
@@ -24,9 +25,28 @@ export const addTab = (tabId) => {
     }
 }
 
-export const addRequest = (request) => {
+export const addRequest = (request, error = false) => {
     const { tabId = chrome.tabs.TAB_ID_NONE, requestId, url, timeStamp } = request;
+    let tips = [];
+    if (!url.includes('f_auto')) {
+        tips.push('Image format selection - consider using automatic format selection f_auto')
+    }
+    if (!url.includes('q_auto')) {
+        tips.push('Fixed quality used, consider replacing with automatic quality selection q_auto')
+    }
+    if (url.includes('f_gif') || url.includes('.gif')) {
+        tips.push('Convert animated GIF to MP4')
+    }
+    if (url.includes('c_fill') && (!url.includes('g_auto') && !url.includes('g_face') && !url.includes('g_faces') )) {
+        tips.push('Crop without content-aware gravity, consider using g_auto')
+    }
 
+    let warnings = []
+    if (!url.includes('q_')) {
+        warnings.push('Image quality not set, add q_auto')
+    }
+    
+    
     return {
         type: ADD_REQUEST,
         tabId: tabId,
@@ -34,8 +54,18 @@ export const addRequest = (request) => {
             requestId,
             url,
             startTime: timeStamp,
-            status: 'pending'
+            status: 'pending',
+            tips,
+            warnings,
+            error
         }
+    }
+}
+export const addRequestData = (data, tabId) => {
+    return {
+        type: ADD_REQUEST_DATA,
+        tabId,
+        data
     }
 }
 
@@ -48,5 +78,6 @@ export const setRequestComplete = (request) => {
         requestId,
         timeStamp,
         isCloudinary: isCloudinaryByResponseHeader(responseHeaders)
+        
     }
 }
