@@ -13,14 +13,19 @@ export default (state = {}, action) => {
                 [action.id]: []
             });
         case ADD_REQUEST:
-            return Object.assign({}, state, {
-                [action.tabId]: [...state[action.tabId], action.request]
-            });
+            if (state[action.tabId]) {
+                return Object.assign({}, state, {
+                    [action.tabId]: [...state[action.tabId], action.request]
+                });
+
+            }else {
+                return state;
+            }
         case ADD_REQUEST_DATA:
             if (state[action.tabId]) {
                 const idx = state[action.tabId].findIndex(i => i.url === action.data.url)
-                clone = [...state[action.tabId]]
-                clone[idx] = [...clone[idx], data]
+                const clone = {...state[action.tabId]}
+                clone[idx] = {...clone[idx], data: action.data}
     
                 return Object.assign({}, state, {
                     [action.tabId]: [...state[action.tabId], clone]
